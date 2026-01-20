@@ -19,15 +19,22 @@ const RecipeSubmissionForm = () => {
     cuisine: "",
     imageUrl: "",
     ingredients: [createIngredient()],
+    instructions: [""], //  NEW
   })
 
   const [errors, setErrors] = useState({})
   const [submittedRecipe, setSubmittedRecipe] = useState(null)
 
+
+  // Core field handler
+
   const handleChange = event => {
     const { name, value } = event.target
     setFormData(prev => ({ ...prev, [name]: value }))
   }
+
+
+  // Ingredients handlers
 
   const handleIngredientChange = (index, field, value) => {
     setFormData(prev => {
@@ -50,6 +57,34 @@ const RecipeSubmissionForm = () => {
       return { ...prev, ingredients: prev.ingredients.filter((_, i) => i !== index) }
     })
   }
+
+
+  //  Instructions handlers
+
+  const handleInstructionChange = (index, value) => {
+    setFormData(prev => {
+      const updated = [...prev.instructions]
+      updated[index] = value
+      return { ...prev, instructions: updated }
+    })
+  }
+
+  const addInstruction = () => {
+    setFormData(prev => ({
+      ...prev,
+      instructions: [...prev.instructions, ""]
+    }))
+  }
+
+  const removeInstruction = index => {
+    setFormData(prev => {
+      if (prev.instructions.length === 1) return prev
+      return { ...prev, instructions: prev.instructions.filter((_, i) => i !== index) }
+    })
+  }
+
+
+  // Validation
 
   const validateForm = data => {
     const newErrors = {}
@@ -78,7 +113,7 @@ const RecipeSubmissionForm = () => {
       try { new URL(data.imageUrl) } catch { newErrors.imageUrl = "Please enter a valid URL" }
     }
 
-    // ✅ Ingredient validations (per row)
+    //  Ingredient validations (per row)
     data.ingredients.forEach((ing, index) => {
       if (!ing.name.trim() || ing.name.trim().length < 2) {
         newErrors[`ingredientName-${index}`] = "Ingredient name must be at least 2 characters"
@@ -93,8 +128,18 @@ const RecipeSubmissionForm = () => {
       if (!ing.unit) newErrors[`ingredientUnit-${index}`] = "Unit is required"
     })
 
+    //  Instructions validations (per step)
+    data.instructions.forEach((step, index) => {
+      if (!step.trim() || step.trim().length < 5) {
+        newErrors[`instruction-${index}`] = "Instruction must be at least 5 characters"
+      }
+    })
+
     return newErrors
   }
+
+
+  // Submit
 
   const handleSubmit = event => {
     event.preventDefault()
@@ -104,7 +149,23 @@ const RecipeSubmissionForm = () => {
 
     if (Object.keys(newErrors).length > 0) return
 
+    //  : Show submitted recipe summary
     setSubmittedRecipe(formData)
+
+    //  : Reset form after success
+    setFormData({
+      title: "",
+      description: "",
+      servings: "",
+      difficulty: "",
+      category: "",
+      cuisine: "",
+      imageUrl: "",
+      ingredients: [createIngredient()],
+      instructions: [""],
+    })
+
+    setErrors({})
   }
 
   return (
@@ -217,13 +278,69 @@ const RecipeSubmissionForm = () => {
           </div>
         ))}
 
+        <hr />
+
+        {/*  Instructions */}
+        <div className="sectionHeader">
+          <h2>Instructions *</h2>
+          <button type="button" className="secondary" onClick={addInstruction}>+ Add</button>
+        </div>
+
+        {formData.instructions.map((step, index) => (
+          <div className="instruction" key={index}>
+            <textarea
+              rows={3}
+              placeholder={`Step ${index + 1}`}
+              value={step}
+              onChange={(e) => handleInstructionChange(index, e.target.value)}
+            />
+            {errors[`instruction-${index}`] && <p className="error">{errors[`instruction-${index}`]}</p>}
+
+            <button
+              type="button"
+              className="danger"
+              onClick={() => removeInstruction(index)}
+              disabled={formData.instructions.length === 1}
+            >
+              Remove Step
+            </button>
+          </div>
+        ))}
+
         <button className="primary" type="submit">Submit Recipe</button>
       </form>
 
+      {/*  Full Recipe Summary Card */}
       {submittedRecipe && (
         <div className="card success">
-          <h2>✅ Submitted Recipe (Ingredients Checkpoint)</h2>
+          <h2> Recipe Submitted!</h2>
+
           <h3>{submittedRecipe.title}</h3>
+          <p><strong>Servings:</strong> {submittedRecipe.servings}</p>
+          <p><strong>Difficulty:</strong> {submittedRecipe.difficulty}</p>
+          <p><strong>Category:</strong> {submittedRecipe.category}</p>
+          <p><strong>Cuisine:</strong> {submittedRecipe.cuisine}</p>
+          <p>{submittedRecipe.description}</p>
+
+          {submittedRecipe.imageUrl && (
+            <img className="img" src={submittedRecipe.imageUrl} alt={submittedRecipe.title} />
+          )}
+
+          <h3>Ingredients</h3>
+          <ul>
+            {submittedRecipe.ingredients.map((ing, i) => (
+              <li key={i}>
+                {ing.quantity} {ing.unit} — {ing.name}
+              </li>
+            ))}
+          </ul>
+
+          <h3>Instructions</h3>
+          <ol>
+            {submittedRecipe.instructions.map((s, i) => (
+              <li key={i}>{s}</li>
+            ))}
+          </ol>
         </div>
       )}
     </div>
