@@ -1,0 +1,102 @@
+/* Reset some default browser styles */
+* {
+  box-sizing: border-box;
+}
+
+.container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px;
+  font-family: system-ui, -apple-system, sans-serif;
+}
+
+.card {
+  background: white;
+  padding: 16px;
+  border-radius: 12px;
+  box-shadow: 0 8px 22px rgba(0,0,0,0.08);
+  margin-bottom: 16px;
+}
+
+label {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+
+input, select, textarea {
+  width: 100%;
+  margin-top: 6px;
+  padding: 10px 12px;
+  border: 1px solid #cfd6e4;
+  border-radius: 10px;
+}
+
+.error {
+  color: #b91c1c;
+  margin: 6px 0 0;
+  font-weight: 600;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr auto;
+  gap: 10px;
+  margin-bottom: 10px;
+  align-items: start;
+}
+
+.instruction {
+  border: 1px solid #e3e7f2;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.primary {
+  width: 100%;
+  margin-top: 10px;
+  background: #2563eb;
+  color: white;
+  font-weight: 800;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.secondary {
+  background: #eef2ff;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.danger {
+  background: #fee2e2;
+  color: #991b1b;
+  border: none;
+  padding: 8px 10px;
+  border-radius: 10px;
+  cursor: pointer;
+  height: 42px;
+}
+
+.success h2 {
+  margin-top: 0vh;
+}
+
+.img {
+  max-width: 280px;
+  width: 100%;
+  border-radius: 12px;
+  border: 1px solid #e3e7f2;
+}
